@@ -89,7 +89,7 @@ int atgmx__init(
 void atgmx__finish(atgmx_t *atgmx)
 {
   if (atgmx->enabled && atgmx->is_master) {
-    at__finish(atgmx->at, AT__FINISH_CLOSE_CFG);
+    at__finish(atgmx->at);
   }
 }
 

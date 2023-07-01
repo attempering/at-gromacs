@@ -115,8 +115,8 @@ static void atgmx__sum_energy(
   double epot = eterm[F_EPOT];
 
   if (dirty) { /* summarize local potential energy */
-    zcom_util__exit_if (!PAR(cr),
-      "node: %d, step: " at_llong_pfmt ": no energy available\n",
+    zcom_utils__exit_if (!PAR(cr),
+        "node: %d, step: " at_llong_pfmt ": no energy available\n",
         cr->nodeid, step);
 
 #ifdef GMX_MPI
@@ -168,7 +168,7 @@ int atgmx__move(atgmx_t *atgmx,
     if (MASTER(cr)) {
 
       // calling at__move()
-      zcom_util__exit_if(0 != at__move(atgmx->at, step_params),
+      zcom_utils__exit_if(0 != at__move(atgmx->at, step_params),
           "#%d, step = " at_llong_pfmt ", error during moving master\n",
           cr->nodeid, step);
     }

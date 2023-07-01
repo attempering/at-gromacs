@@ -124,7 +124,7 @@ void AtGmx::sum_energy(
   }
 
   if (dirty) { /* summarize local potential energy */
-    zcom_util__exit_if (!PAR(cr),
+    zcom_utils__exit_if (!PAR(cr),
       "node: %d, step: " at_llong_pfmt ": no energy available\n",
         cr->nodeid, step);
 
@@ -182,7 +182,7 @@ int AtGmx::move(
     if (ATGMX_IS_MAIN_RANK(cr)) {
 
       // calling at__move()
-      zcom_util__exit_if(0 != at__move(at, step_params),
+      zcom_utils__exit_if(0 != at__move(at, step_params),
           "#%d, step = " at_llong_pfmt ", error during moving master\n",
           cr->nodeid, step);
     }

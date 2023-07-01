@@ -125,7 +125,7 @@ AtGmx::AtGmx(
 AtGmx::~AtGmx()
 {
   if (enabled && is_master) {
-    at__finish(at, AT__FINISH_CLOSE_CFG);
+    at__finish(at);
   }
 }
 
