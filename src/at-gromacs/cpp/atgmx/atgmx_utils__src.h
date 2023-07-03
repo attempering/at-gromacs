@@ -92,11 +92,11 @@ bool AtGmx::do_tempering_on_step(at_llong_t step,
     return false;
   }
 
-  int nsttemp = at->driver->nsttemp;
+  int nst_tempering = at->driver->nst_tempering;
   bool do_tempering;
 
-  if (nsttemp > 0) {
-    do_tempering = (step % nsttemp) == 0;
+  if (nst_tempering > 0) {
+    do_tempering = (step % nst_tempering) == 0;
   } else {
     do_tempering = is_ns_step;
   }

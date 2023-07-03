@@ -91,11 +91,11 @@ at_bool_t atgmx__do_tempering_on_step(atgmx_t *atgmx, at_llong_t step,
     return AT__FALSE;
   }
 
-  int nsttemp = atgmx->at->driver->nsttemp;
+  int nst_tempering = atgmx->at->driver->nst_tempering;
   at_bool_t do_tempering;
 
-  if (nsttemp > 0) {
-    do_tempering = (step % nsttemp) == 0;
+  if (nst_tempering > 0) {
+    do_tempering = (step % nst_tempering) == 0;
   } else {
     do_tempering = is_ns_step;
   }
