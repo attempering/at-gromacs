@@ -19,27 +19,29 @@
 #ifndef ATGMX_BASIC__SRC_H__
 #define ATGMX_BASIC__SRC_H__
 
-#include "atgmx__def.h"
+#include "atgmx.h"
 //#include "atgmx_mpi.h"
 
+namespace gmx
+{
 
-void AtGmx::update_thermostat_temperatures(const t_inputrec *ir) const
+void AtGmx::updateThermostatTemperatures(const t_inputrec *ir) const
 {
   int i;
   const double tol = 0.5;
-  const real ref_temp = static_cast<real>(at->utils->thermostat_temp);
+  const real refTemp = static_cast<real>(at_->utils->thermostat_temp);
 
-  if (!enabled) {
-    fprintf(stderr, "\rError@atgmx: trying to call update_thermostat_temperatures without enabling atgmx\n");
+  if (!enabled_) {
+    logger_->error("trying to call update_thermostat_temperatures without enabling atgmx\n");
     return;
   }
 
   for (i = 0; i < ir->opts.ngtc; i++) {
-    if (std::fabs(ir->opts.ref_t[i] - ref_temp) > tol) {
-      fprintf(stderr, "\rWarning@atgmx: trying to modify Gromacs thermostat group temperature from %g to %g\n",
-        ir->opts.ref_t[i], ref_temp);
+    if (std::fabs(ir->opts.ref_t[i] - refTemp) > tol) {
+      logger_->warning("trying to modify Gromacs thermostat group temperature from %g to %g\n",
+          ir->opts.ref_t[i], refTemp);
     }
-    ir->opts.ref_t[i] = ref_temp;
+    ir->opts.ref_t[i] = refTemp;
   }
 }
 
@@ -49,19 +51,15 @@ AtGmx::AtGmx(
     const char *fn_cfg,
     const t_inputrec *ir,
     t_commrec *cr,
-    at_bool_t is_continuation,
-    at_bool_t multi_sims,
+    bool isContinuation,
+    bool multiSims,
     at_flags_t flags)
 {
-  if (fn_cfg != nullptr) {
-    enabled = AT__TRUE;
-  } else {
-    enabled = AT__FALSE;
-  }
+  enabled_ = (fn_cfg != nullptr);
 
-  is_master = (ATGMX_IS_MAIN_RANK(cr) ? AT__TRUE : AT__FALSE);
+  isMainNode_ = ATGMX_IS_MAIN_RANK(cr);
 
-  if (enabled && is_master) {
+  if (enabled_ && isMainNode_) {
     at_params_sys_t sys_params[1];
 
 #if GMX_VERSION >= 20220000
@@ -72,8 +70,8 @@ AtGmx::AtGmx(
 
     sys_params->sim_id = 0;
     sys_params->md_time_step = ir->delta_t;
-    sys_params->multi_sims = multi_sims;
-    sys_params->is_continuation = is_continuation;
+    sys_params->multi_sims = static_cast<at_bool_t>(multiSims);
+    sys_params->is_continuation = static_cast<at_bool_t>(isContinuation);
 
     // This call may fail is the configuration doesn't exist
     // or its content contains an error
@@ -85,11 +83,13 @@ AtGmx::AtGmx(
     // i.e., the command-line options `-at at.cfg` is not set,
     // we will simply set `enabled` to false
     //
-    if (at__init(at, fn_cfg, sys_params, flags) != 0) {
+    if (at__init(at_, fn_cfg, sys_params, flags) != 0) {
       throw;
     }
   }
-  //fprintf(stderr, "enabled %d, is_master %d\n", enabled, is_master); getchar();
+  //fprintf(stderr, "enabled %d, isMainNode_ %d\n", enabled, isMainNode_); getchar();
+
+  initLogger(isContinuation);
 
 #ifdef GMX_MPI
   // tell every node the settings on the master
@@ -98,23 +98,23 @@ AtGmx::AtGmx(
   // we pass MPI_COMM_NULL to avoid the case of one-node-mpi
   //
   // This function should be called even if AtGmx is disabled
-  // so that members mpi_rank, mpi_size, mpi_comm, is_master are properly set
+  // so that members mpiRank_, mpiSize_, mpiComm_, isMainNode_
+  // are properly set
   //
   if (PAR(cr)) {
-    init_mpi(PAR(cr) ? cr->mpi_comm_mygroup : MPI_COMM_NULL);
+    initMpi(PAR(cr) ? cr->mpi_comm_mygroup : MPI_COMM_NULL);
   }
-
 #endif
 
-  if (enabled) {
-    // every node in the MPI case should updates its thermostat temperature(s)
-    update_thermostat_temperatures(ir);
+  if (enabled_) {
+    // in the MPI case, every node updates its
+    // thermostat temperature and force scale.
+    // So the following calls are not limited to the master.
+    updateThermostatTemperatures(ir);
+    updateForceScale(cr);
 
-    // every node in the MPI case should update its force scale
-    update_force_scale(cr);
-
-    if (is_master) {
-      at__manifest(at);
+    if (isMainNode_) {
+      at__manifest(at_);
     }
   }
 
@@ -124,10 +124,12 @@ AtGmx::AtGmx(
 
 AtGmx::~AtGmx()
 {
-  if (enabled && is_master) {
-    at__finish(at);
+  if (enabled_ && isMainNode_) {
+    at__finish(at_);
   }
 }
 
+
+} // namespace gmx
 
 #endif

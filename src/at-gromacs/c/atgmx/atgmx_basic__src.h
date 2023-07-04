@@ -49,9 +49,9 @@ int atgmx__init(
     return 0;
   }
 
-  atgmx->is_master = (MASTER(cr) ? AT__TRUE : AT__FALSE);
+  atgmx->is_main_node = (MASTER(cr) ? AT__TRUE : AT__FALSE);
 
-  if (atgmx->is_master) {
+  if (atgmx->is_main_node) {
     at_params_sys_t sys_params[1];
 
     sys_params->boltz = BOLTZ;
@@ -77,7 +77,7 @@ int atgmx__init(
 
   atgmx__update_force_scale(atgmx, cr);
 
-  if (atgmx->is_master) {
+  if (atgmx->is_main_node) {
     at__manifest(atgmx->at);
   }
 
@@ -88,7 +88,7 @@ int atgmx__init(
 
 void atgmx__finish(atgmx_t *atgmx)
 {
-  if (atgmx->enabled && atgmx->is_master) {
+  if (atgmx->enabled && atgmx->is_main_node) {
     at__finish(atgmx->at);
   }
 }

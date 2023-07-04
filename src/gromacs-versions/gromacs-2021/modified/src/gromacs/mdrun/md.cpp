@@ -462,7 +462,7 @@ void gmx::LegacySimulator::do_md()
                                 startingBehavior != StartingBehavior::NewSimulation,
                                 shellfc != nullptr, opt2fn("-awh", nfile, fnm), pull_work);
 
-    auto atGmx = AtGmx(
+    auto atGmx = gmx::AtGmx(
         opt2fn_null("-at", nfile, fnm),
         ir, cr,
         startingBehavior != StartingBehavior::NewSimulation,
@@ -908,7 +908,7 @@ void gmx::LegacySimulator::do_md()
             bCalcEner = TRUE;
         }
 
-        if (atGmx.do_tempering_on_step(step, bNS)) {
+        if (atGmx.doTemperingOnStep(step, bNS)) {
             bCalcEner = TRUE;
             bCalcVir = TRUE;
         }
@@ -962,7 +962,7 @@ void gmx::LegacySimulator::do_md()
                      (bNS ? GMX_FORCE_NS : 0) | force_flags, ddBalanceRegionHandler);
         }
 
-        atGmx.scale_force(f.view(), mdatoms);
+        atGmx.scaleForce(f.view(), mdatoms);
 
         // VV integrators do not need the following velocity half step
         // if it is the first step after starting from a checkpoint.

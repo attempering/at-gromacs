@@ -252,7 +252,7 @@ double do_md(FILE *fplog, t_commrec *cr, int nfile, const t_filenm fnm[],
         Flags & MD_STARTFROMCPT,
         AT__INIT_VERBOSE);
 
-    fprintf(stderr, "Info@atgmx: configuration file [%s], enabled %d is_master %d, %d\n", atgmx__opt2fn("-at", nfile, fnm), atgmx->enabled, atgmx->is_master, MASTER(cr));
+    fprintf(stderr, "Info@atgmx: configuration file \"%s\", enabled %d is_main_node %d, %d\n", atgmx__opt2fn("-at", nfile, fnm), atgmx->enabled, atgmx->is_main_node, MASTER(cr));
 
     /* Check for special mdrun options */
     bRerunMD = (Flags & MD_RERUN);

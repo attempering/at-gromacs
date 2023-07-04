@@ -1074,7 +1074,7 @@ double gmx::do_md(FILE *fplog, t_commrec *cr, int nfile, const t_filenm fnm[],
             bCalcEner = TRUE;
         }
 
-        if (atGmx.do_tempering_on_step(step, bNS)) {
+        if (atGmx.doTemperingOnStep(step, bNS)) {
             bCalcEner = TRUE;
             bCalcVir = TRUE;
         }
@@ -1118,7 +1118,7 @@ double gmx::do_md(FILE *fplog, t_commrec *cr, int nfile, const t_filenm fnm[],
                      (bNS ? GMX_FORCE_NS : 0) | force_flags);
         }
 
-        atGmx.scale_force(f, mdatoms);
+        atGmx.scaleForce(f, mdatoms);
 
         if (EI_VV(ir->eI) && !startingFromCheckpoint && !bRerunMD)
         /*  ############### START FIRST UPDATE HALF-STEP FOR VV METHODS############### */

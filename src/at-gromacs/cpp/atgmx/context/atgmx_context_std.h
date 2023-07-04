@@ -16,7 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_GROMACS__DEF_H__
-#define AT_GROMACS__DEF_H__
+#ifndef ATGMX_CONTEXT_STD_H__
+#define ATGMX_CONTEXT_STD_H__
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <memory>
 
 #endif

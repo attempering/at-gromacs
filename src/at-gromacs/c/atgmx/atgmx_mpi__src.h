@@ -53,7 +53,7 @@ int atgmx__init_mpi(atgmx_t *atgmx, MPI_Comm comm)
   atgmx->mpi_size = mpi_size;
   atgmx->mpi_rank = mpi_rank;
 
-  atgmx->is_master = (mpi_rank == 0);
+  atgmx->is_main_node = (mpi_rank == 0);
 
   return 0;
 }

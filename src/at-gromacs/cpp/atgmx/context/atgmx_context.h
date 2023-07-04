@@ -19,126 +19,13 @@
 #ifndef ATGMX_CONTEXT_H__
 #define ATGMX_CONTEXT_H__
 
-
-#ifndef GMX_VERSION
-#include "gromacs/version.h"
-#endif
-
-
-#include <string.h>
-#include <signal.h>
+#include "atgmx_context_std.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-// /src/gromacs/utility (5.1, 2021)
-// /include (4.6)
-#include "gromacs/utility/smalloc.h"
+#include "atgmx_context_gromacs.h"
 
-#if GMX_VERSION >= 20160000
-// /src/gromacs/gmxlib (2021)
-#include "gromacs/gmxlib/network.h"
-#else
-#include "gromacs/legacyheaders/network.h"
-#endif
-
-#if GMX_VERSION >= 20160000
-// (2021)
-#include "gromacs/mdlib/vsite.h"
-#else
-// (5.0)
-#include "gromacs/legacyheaders/network.h"
-#endif
-
-#if GMX_VERSION >= 20180000
-#include "gromacs/mdlib/enerdata_utils.h"
-#endif
-
-#if GMX_VERSION >= 20180000
-#include "gromacs/mdtypes/enerdata.h"
-#endif
-
-#if GMX_VERSION >= 20180000
-#include "gromacs/mdtypes/pull_params.h"
-#endif
-
-#if GMX_VERSION >= 20180000
-#include "gromacs/mdtypes/multipletimestepping.h"
-#endif
-
-#if GMX_VERSION >= 20180000
-#include "gromacs/utility/keyvaluetree.h"
-#endif
-
-// t_inputrec
-#if GMX_VERSION >= 20160000
-// (2021)
-#include "gromacs/mdtypes/inputrec.h"
-#else
-// (5.0)
-#include "gromacs/legacyheaders/inputrec.h"
-#endif
-
-// t_commrec, MASTER(), PAR()
-#if GMX_VERSION >= 20160000
-// (2021)
-#include "gromacs/mdtypes/commrec.h"
-#else
-// (5.0)
-#include "gromacs/legacyheaders/types/commrec.h"
-#endif
-
-#ifdef MASTER
-#define ATGMX_IS_MAIN_RANK(cr) MASTER(cr)
-#else
-#define ATGMX_IS_MAIN_RANK(cr) MAIN(cr)
-#endif
-
-
-#if GMX_VERSION >= 20160000
-// (2021)
-// t_mdatoms
-#include "gromacs/mdtypes/mdatom.h"
-#else
-// (5.0)
-#include "gromacs/legacyheaders/types/mdatom.h"
-#endif
-
-// gmx::ForceBuffersView
-#if GMX_VERSION >= 20180000
-// (2021)
-#include "gromacs/mdtypes/forcebuffers.h"
-#endif
-
-// gmx_omp_nthreads_get();
-#if GMX_VERSION >= 20160000
-#include "gromacs/mdlib/gmx_omp_nthreads.h"
-#endif
-
-// getThreadAtomRange();
-#if GMX_VERSION >= 20160000
-#include "gromacs/mdlib/update.h"
-#else 
-#include "gromacs/legacyheaders/update.h"
-#endif
-
-// t_filenm
-#if GMX_VERSION >= 20160000
-// (2021)
-#include "gromacs/commandline/filenm.h"
-#else
-// (5.0)
-#include "gromacs/fileio/filenm.h"
-#endif
-
-// gmx_multisim_t
-#if GMX_VERSION >= 20180000
-// (2021)
-#include "gromacs/mdrunutility/multisim.h"
-#endif
-
-// mpi.h or tmpi.h
-#include "gromacs/utility/gmxmpi.h"
 
 #endif

@@ -23,6 +23,8 @@
 #include "atgmx.h"
 
 #include "at-engine/at-engine__src.h"
+
+#include "logger/atgmx_logger__src.h"
 #include "atgmx_utils__src.h"
 #include "atgmx_mpi__src.h"
 #include "atgmx_basic__src.h"

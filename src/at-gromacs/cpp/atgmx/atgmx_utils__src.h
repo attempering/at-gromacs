@@ -21,9 +21,8 @@
 
 #include "atgmx.h"
 
-#include "at-engine/at-engine.h"
-
-
+namespace gmx
+{
 
 /* to be used as a replacement of opt2fn(),
  * it will replace the file extension from .mdp to .cfg */
@@ -52,31 +51,31 @@ __inline const char *atgmx__opt2fn(const char *opt, int nfile, const t_filenm fn
 
 
 
-double AtGmx::get_beta() {
-  return at__get_beta(at);
+double AtGmx::getBeta() {
+  return at__get_beta(at_);
 }
 
 
 
 /* update the current scale for all nodes */
-void AtGmx::update_force_scale(t_commrec *cr)
+void AtGmx::updateForceScale(t_commrec *cr)
 {
-  if (!enabled) {
+  if (!enabled_) {
     return;
   }
 
   // call the single processor version on the main rank
   if (ATGMX_IS_MAIN_RANK(cr)) {
-    at__update_force_scale(at);
+    at__update_force_scale(at_);
   }
 
 #ifdef GMX_MPI
   /* inform all other PP nodes the new scale(s) */
   if (PAR(cr)) {
 #if GMX_VERSION >= 20210000
-    gmx_bcast(sizeof(at->force_scale), &at->force_scale, cr->mpi_comm_mygroup);
+    gmx_bcast(sizeof(at_->force_scale), &at_->force_scale, cr->mpi_comm_mygroup);
 #else
-    gmx_bcast(sizeof(at->force_scale), &at->force_scale, cr);
+    gmx_bcast(sizeof(at_->force_scale), &at_->force_scale, cr);
 #endif
   }
 #endif
@@ -85,28 +84,28 @@ void AtGmx::update_force_scale(t_commrec *cr)
 
 
 
-bool AtGmx::do_tempering_on_step(at_llong_t step,
-    bool is_ns_step)
+bool AtGmx::doTemperingOnStep(at_llong_t step,
+    gmx_bool isNsStep)
 {
-  if (!enabled) {
+  if (!enabled_) {
     return false;
   }
 
-  int nst_tempering = at->driver->nst_tempering;
-  bool do_tempering;
+  int nst_tempering = at_->driver->nst_tempering;
+  bool doTempering;
 
   if (nst_tempering > 0) {
-    do_tempering = (step % nst_tempering) == 0;
+    doTempering = (step % nst_tempering) == 0;
   } else {
-    do_tempering = is_ns_step;
+    doTempering = static_cast<bool>(isNsStep);
   }
 
-  return do_tempering;
+  return doTempering;
 }
 
 
 
-void AtGmx::sum_energy(
+void AtGmx::sumEnergy(
 #if GMX_VERSION >= 20220000
     const std::array<real, F_NRE>& eterm,
 #else
@@ -118,7 +117,7 @@ void AtGmx::sum_energy(
 {
   double epot = eterm[F_EPOT];
 
-  if (!enabled) {
+  if (!enabled_) {
     fprintf(stderr, "\rError@atgmx: trying to call sum_energy() without enabling atgmx\n");
     return;
   }
@@ -135,11 +134,31 @@ void AtGmx::sum_energy(
   }
 
   if (ATGMX_IS_MAIN_RANK(cr)) {
-    at->energy = epot;
+    at_->energy = epot;
   }
 
 }
 
+
+void AtGmx::initLogger(
+    bool isContinuation)
+{
+  if (!isMainNode_) {
+    return;
+  }
+
+  std::string fnLog;
+  if (enabled_) {
+    fnLog = std::string(at_->utils->data_dir) + "/atgmx.log";
+  } else {
+    fnLog = "atgmx.log";
+  }
+
+  // initialize the logger that is active only on the main node;
+  // On non-master nodes, calls return 
+  logger_ = std::make_shared<AtGmxLogger>(
+      fnLog, isMainNode_, isContinuation);
+}
 
 
 /* only a PP-processor calls this function
@@ -147,48 +166,47 @@ void AtGmx::sum_energy(
 int AtGmx::move(
     gmx_enerdata_t *enerd,
     at_llong_t step,
-    at_bool_t is_first_step,
-    at_bool_t is_last_step,
-    at_bool_t has_global_stats,
-    at_bool_t is_xtc_step,
-    at_bool_t is_ns_step,
+    bool isFirstStep,
+    bool isLastStep,
+    bool hasGlobalStats,
+    bool isXtcStep,
+    bool isNsStep,
     t_commrec *cr)
 {
-  at_bool_t do_tempering;
-  at_params_step_t step_params[1];
-
-  if (!enabled) {
+  if (!enabled_) {
     //fprintf(stderr, "\rError@atgmx: trying to call move() without enabling atgmx\n");
     return -1;
   }
 
+  at_params_step_t step_params[1];
+
   step_params->step = step;
-  step_params->is_first_step = is_first_step;
-  step_params->is_last_step = is_last_step;
-  step_params->do_trace = is_xtc_step;
+  step_params->is_first_step = static_cast<at_bool_t>(isFirstStep);
+  step_params->is_last_step = static_cast<at_bool_t>(isLastStep);
+  step_params->do_trace = static_cast<at_bool_t>(isXtcStep);
   step_params->flush_output = AT__FALSE;
 
-  do_tempering = do_tempering_on_step(step,
-      is_ns_step);
+  bool doTempering = doTemperingOnStep(step,
+      isNsStep);
 
-  if (do_tempering) {
+  if (doTempering) {
 
-    at_bool_t dirty = PAR(cr) && !has_global_stats;
+    bool dirty = PAR(cr) && !hasGlobalStats;
 
     /* summarize the relevant energy */
-    sum_energy(enerd->term, cr, step, dirty);
+    sumEnergy(enerd->term, cr, step, dirty);
 
     /* change temperature, and regularly write output files */
     if (ATGMX_IS_MAIN_RANK(cr)) {
 
       // calling at__move()
-      zcom_utils__exit_if(0 != at__move(at, step_params),
+      zcom_utils__exit_if(0 != at__move(at_, step_params),
           "#%d, step = " at_llong_pfmt ", error during moving master\n",
           cr->nodeid, step);
     }
 
-    // update atgmx->at->force_scale
-    update_force_scale(cr);
+    // update at_->force_scale
+    updateForceScale(cr);
 
   } else {
 
@@ -196,7 +214,7 @@ int AtGmx::move(
     // if tempering is done, output tasks are already
     // considered in at__move()
     if (ATGMX_IS_MAIN_RANK(cr)) {
-      at__output(at, step_params);
+      at__output(at_, step_params);
     }
 
   }
@@ -206,13 +224,13 @@ int AtGmx::move(
 
 
 #if GMX_VERSION >= 20210000
-void AtGmx::scale_force(gmx::ForceBuffersView& forceView, const t_mdatoms *mdatoms)
+void AtGmx::scaleForce(gmx::ForceBuffersView& forceView, const t_mdatoms *mdatoms)
 {
-  if (!enabled) {
+  if (!enabled_) {
     return;
   }
 
-  real fs = (real) at->force_scale;
+  real fs = static_cast<real>(at_->force_scale);
 
   auto f = forceView.forceWithPadding();
   int homenr = mdatoms->homenr;
@@ -245,14 +263,14 @@ void AtGmx::scale_force(gmx::ForceBuffersView& forceView, const t_mdatoms *mdato
 #else
 // for versions up to 2020
 
-void AtGmx::scale_force(rvec f[], const t_mdatoms *mdatoms)
+void AtGmx::scaleForce(rvec f[], const t_mdatoms *mdatoms)
 {
-  if (!enabled) {
+  if (!enabled_) {
     return;
   }
 
   /* scale the force */
-  real fs = (real) at->force_scale;
+  real fs = (real) at_->force_scale;
 
   int homenr = mdatoms->homenr;
   int nth = gmx_omp_nthreads_get(emntUpdate);
@@ -273,6 +291,6 @@ void AtGmx::scale_force(rvec f[], const t_mdatoms *mdatoms)
 
 #endif
 
-
+} // namespace gmx
 
 #endif

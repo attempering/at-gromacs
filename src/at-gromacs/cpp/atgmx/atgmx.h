@@ -19,13 +19,82 @@
 #ifndef ATGMX_H__
 #define ATGMX_H__
 
-#include "atgmx__def.h"
-#include "context/atgmx_context.h"
+#include "logger/atgmx_logger.h"
 
-#include "at-engine/at-engine.h"
-//#include "atgmx_utils.h"
-//#include "atgmx_mpi.h"
-//#include "atgmx_basic.h"
+namespace gmx
+{
 
+class AtGmx
+{
+
+public:
+
+  AtGmx(const char *fnCfg,
+        const t_inputrec *ir,
+        t_commrec *cr,
+        bool isContinuation,
+        bool multiSims,
+        at_flags_t flags);
+
+  ~AtGmx();
+
+  void initLogger(bool isContinuation);
+
+  int move(
+    gmx_enerdata_t *enerd,
+    at_llong_t step,
+    bool isFirstStep,
+    bool isLastStep,
+    bool hasGlobalStats,
+    bool isXtcStep,
+    bool isNsStep,
+    t_commrec *cr);
+
+#if GMX_VERSION >= 20210000
+  void scaleForce(gmx::ForceBuffersView& forceView, const t_mdatoms *mdatoms);
+#else
+  void scaleForce(rvec f[], const t_mdatoms *mdatoms);
+#endif
+
+  void updateThermostatTemperatures(const t_inputrec *ir) const;
+
+  int initMpi(MPI_Comm comm);
+
+  double getBeta();
+
+  bool doTemperingOnStep(at_llong_t step,
+      gmx_bool isNsStep);
+
+  void updateForceScale(t_commrec *cr);
+
+  void sumEnergy(
+#if GMX_VERSION >= 20220000
+      const std::array<real, F_NRE>& eterm,
+#else
+      const real *eterm,
+#endif
+      t_commrec *cr,
+      at_llong_t step,
+      bool dirty);
+
+private:
+
+  bool enabled_;
+  bool isMainNode_;
+
+  at_t at_[1];
+
+  std::shared_ptr<AtGmxLogger> logger_;
+
+#ifdef GMX_MPI
+  MPI_Comm mpiComm_;
+#endif
+
+  int mpiSize_;
+  int mpiRank_;
+
+};
+
+} // namespace gmx
 
 #endif

@@ -20,47 +20,62 @@
 #define ATGMX_MPI__SRC_H__
 #ifdef GMX_MPI
 
-#include "atgmx__def.h"
+#include "atgmx.h"
+
+namespace gmx
+{
 
 // This function should be called even if AtGmx is disabled
 // so that members of the class
-// mpi_rank, mpi_size, mpi_comm, is_master are properly set
+// mpi_rank, mpi_size, mpi_comm, isMainNode_ are properly set
 //
-int AtGmx::init_mpi(MPI_Comm comm)
+int AtGmx::initMpi(MPI_Comm comm)
 {
-  int mpi_size_l = 1;
-  int mpi_rank_l = 0;
+  int mpiSize = 1;
+  int mpiRank = 0;
 
   if (comm != MPI_COMM_NULL) {
-    if (MPI_SUCCESS != MPI_Comm_size(comm, &mpi_size_l)) {
-      fprintf(stderr, "cannot even get MPI size\n");
+    if (MPI_SUCCESS != MPI_Comm_size(comm, &mpiSize)) {
+      fprintf(stderr, "Error@atgmx.mpi: cannot get MPI size\n");
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       exit(1);
     }
   }
-  if (mpi_size_l > 1) {
-    if (MPI_SUCCESS != MPI_Comm_rank(comm, &mpi_rank_l)) {
-      fprintf(stderr, "cannot get MPI rank\n");
+
+  if (mpiSize > 1) {
+
+    if (MPI_SUCCESS != MPI_Comm_rank(comm, &mpiRank)) {
+      fprintf(stderr, "Error@atgmx.mpi: cannot get MPI rank\n");
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       exit(1);
     }
-    if (MPI_SUCCESS != MPI_Bcast(this, sizeof(*this), MPI_BYTE, 0, comm)) {
-      fprintf(stderr, "%3d/%3d: failed to bcast atgmx (%p), type = *atgmx, size = 1 (%d), comm = 0x%lX\n",
-          mpi_rank_l, mpi_size_l, (void *) this, 1, (unsigned long) comm);
+
+    if (MPI_SUCCESS != MPI_Bcast(&enabled_, sizeof(enabled_), MPI_BYTE, 0, comm)) {
+      fprintf(stderr, "Error@atgmx.mpi: %3d/%3d: failed to broadcast `enabled_`, type = bool, comm = 0x%lX\n",
+          mpiRank, mpiSize, (unsigned long) comm);
       fprintf(stderr, "FILE: %s, LINE: %d\n", __FILE__, __LINE__);
       exit(1);
     }
+
+    if (MPI_SUCCESS != MPI_Bcast(at_, sizeof(at_t), MPI_BYTE, 0, comm)) {
+      fprintf(stderr, "Error@atgmx.mpi: %3d/%3d: failed to broadcast at (%p), type = at_t, comm = 0x%lX\n",
+          mpiRank, mpiSize, static_cast<void *>(at_), (unsigned long) comm);
+      fprintf(stderr, "FILE: %s, LINE: %d\n", __FILE__, __LINE__);
+      exit(1);
+    }
+
   }
 
-  mpi_comm = comm;
-  mpi_size = mpi_size_l;
-  mpi_rank = mpi_rank_l;
+  mpiComm_ = comm;
+  mpiSize_ = mpiSize;
+  mpiRank_ = mpiRank;
 
-  is_master = (mpi_rank == 0);
+  isMainNode_ = (mpiRank_ == 0);
 
   return 0;
 }
 
+} // namespace gmx
 
 #endif /* defined(GMX_MPI) */
 #endif

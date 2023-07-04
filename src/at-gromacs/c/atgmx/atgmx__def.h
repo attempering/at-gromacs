@@ -27,7 +27,7 @@
 typedef struct atgmx_t_
 {
   at_bool_t enabled;
-  at_bool_t is_master;
+  at_bool_t is_main_node;
 
   at_t at[1];
 
