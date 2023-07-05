@@ -65,7 +65,7 @@ void AtGmx::updateForceScale(t_commrec *cr)
   }
 
   // call the single processor version on the main rank
-  if (ATGMX_IS_MAIN_RANK(cr)) {
+  if (ATGMX__IS_MAIN_RANK(cr)) {
     at__update_force_scale(at_);
   }
 
@@ -133,7 +133,7 @@ void AtGmx::sumEnergy(
 
   }
 
-  if (ATGMX_IS_MAIN_RANK(cr)) {
+  if (ATGMX__IS_MAIN_RANK(cr)) {
     at_->energy = epot;
   }
 
@@ -197,7 +197,7 @@ int AtGmx::move(
     sumEnergy(enerd->term, cr, step, dirty);
 
     /* change temperature, and regularly write output files */
-    if (ATGMX_IS_MAIN_RANK(cr)) {
+    if (ATGMX__IS_MAIN_RANK(cr)) {
 
       // calling at__move()
       zcom_utils__exit_if(0 != at__move(at_, step_params),
@@ -213,7 +213,7 @@ int AtGmx::move(
     // not doing tempering, we may need to output
     // if tempering is done, output tasks are already
     // considered in at__move()
-    if (ATGMX_IS_MAIN_RANK(cr)) {
+    if (ATGMX__IS_MAIN_RANK(cr)) {
       at__output(at_, step_params);
     }
 

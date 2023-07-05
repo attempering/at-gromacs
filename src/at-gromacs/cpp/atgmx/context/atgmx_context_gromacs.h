@@ -50,9 +50,9 @@
 #include "gromacs/mdtypes/commrec.h"
 
 #if GMX_VERSION >= 20230000
-#define ATGMX_IS_MAIN_RANK(cr) MAIN(cr)
+#define ATGMX__IS_MAIN_RANK(cr) MAIN(cr)
 #else
-#define ATGMX_IS_MAIN_RANK(cr) MASTER(cr)
+#define ATGMX__IS_MAIN_RANK(cr) MASTER(cr)
 #endif
 
 #if GMX_VERSION >= 20190000

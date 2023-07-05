@@ -79,7 +79,7 @@ AtGmx::AtGmx(
 {
   enabled_ = (fn_cfg != nullptr);
 
-  isMainNode_ = ATGMX_IS_MAIN_RANK(cr);
+  isMainNode_ = ATGMX__IS_MAIN_RANK(cr);
 
   if (enabled_ && isMainNode_) {
     at_params_sys_t sys_params[1];

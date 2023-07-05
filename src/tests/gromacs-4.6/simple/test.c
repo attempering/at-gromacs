@@ -81,7 +81,7 @@ int work(int argc, char **argv)
     at_bool_t is_ns_step = AT__TRUE;
     double epot = 0;
 
-    if (ATGMX_IS_MAIN_RANK(cr)) {
+    if (ATGMX__IS_MAIN_RANK(cr)) {
       epot = -sigma * sigma * atgmx__get_beta(atgmx)
           + sigma * zcom_mtrng__rand_gauss(rng);
     } else {
@@ -95,7 +95,7 @@ int work(int argc, char **argv)
         is_xtc_step, is_ns_step,
         cr);
 
-    if (ATGMX_IS_MAIN_RANK(cr) && step % 1000 == 0) {
+    if (ATGMX__IS_MAIN_RANK(cr) && step % 1000 == 0) {
       printf("step %ld: beta %g epot %g\n", (long) step, atgmx__get_beta(atgmx), epot);
     }
   }

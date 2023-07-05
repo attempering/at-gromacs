@@ -73,7 +73,7 @@ int work(int argc, char **argv)
 
   zcom_mtrng__init_from_seed(rng, 12345);
 
-  if (ATGMX_IS_MAIN_RANK(cr)) {
+  if (ATGMX__IS_MAIN_RANK(cr)) {
     remove("atdata/trace.dat");
   }
 
@@ -85,7 +85,7 @@ int work(int argc, char **argv)
     at_bool_t is_ns_step = AT__TRUE;
     double epot = 0;
 
-    if (ATGMX_IS_MAIN_RANK(cr)) {
+    if (ATGMX__IS_MAIN_RANK(cr)) {
       epot = -sigma * sigma * atgmx.getBeta()
           + sigma * zcom_mtrng__rand_gauss(rng);
     } else {
@@ -99,7 +99,7 @@ int work(int argc, char **argv)
         is_xtc_step, is_ns_step,
         cr.get());
 
-    if (ATGMX_IS_MAIN_RANK(cr) && step % 1000 == 0) {
+    if (ATGMX__IS_MAIN_RANK(cr) && step % 1000 == 0) {
       printf("step %ld: beta %g epot %g\n", (long) step, atgmx.getBeta(), epot);
     }
   }

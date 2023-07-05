@@ -21,6 +21,8 @@
 
 #include "atgmx_basic.h"
 #include "atgmx_mpi.h"
+#include "atgmx_utils.h"
+
 
 
 static void atgmx__update_thermostat_temperatures(atgmx_t *atgmx, t_inputrec *ir)
@@ -44,7 +46,7 @@ int atgmx__init(
 {
   atgmx->enabled = ((fn_cfg != NULL) ? AT__TRUE : AT__FALSE);
 
-  atgmx->is_main_node = (ATGMX_IS_MAIN_RANK(cr) ? AT__TRUE : AT__FALSE);
+  atgmx->is_main_node = (ATGMX__IS_MAIN_RANK(cr) ? AT__TRUE : AT__FALSE);
 
   if (atgmx->enabled && atgmx->is_main_node) {
     at_params_sys_t sys_params[1];
