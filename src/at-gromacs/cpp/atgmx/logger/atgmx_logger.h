@@ -21,7 +21,7 @@
 
 #include "../atgmx_engine_context.h"
 
-namespace gmx
+namespace atgmx
 {
 
 class AtGmxLogger

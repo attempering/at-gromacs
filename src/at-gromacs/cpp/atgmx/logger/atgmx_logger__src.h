@@ -5,7 +5,7 @@
 
 #include "atgmx_logger.h"
 
-namespace gmx
+namespace atgmx
 {
 
 void AtGmxLogger::printf(const char *fmt, ...) const
@@ -74,6 +74,6 @@ void AtGmxLogger::info(const char *fmt, ...) const
 
 
 
-} // namespace gmx
+} // namespace atgmx
 
 #endif // ATGMX_LOGGER_H__

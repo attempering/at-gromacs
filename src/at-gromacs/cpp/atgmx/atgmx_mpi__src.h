@@ -22,7 +22,7 @@
 
 #include "atgmx.h"
 
-namespace gmx
+namespace atgmx
 {
 
 // This function should be called even if AtGmx is disabled
@@ -75,7 +75,7 @@ int AtGmx::initMpi(MPI_Comm comm)
   return 0;
 }
 
-} // namespace gmx
+} // namespace atgmx
 
 #endif /* defined(GMX_MPI) */
 #endif

@@ -21,7 +21,7 @@
 
 #include "logger/atgmx_logger.h"
 
-namespace gmx
+namespace atgmx
 {
 
 class AtGmx
@@ -32,8 +32,8 @@ public:
   AtGmx(const char *fnCfg,
         const t_inputrec *ir,
         t_commrec *cr,
+        const gmx_multisim_t *ms,
         bool isContinuation,
-        bool multiSims,
         at_flags_t flags);
 
   ~AtGmx();
@@ -95,6 +95,6 @@ private:
 
 };
 
-} // namespace gmx
+} // namespace atgmx
 
 #endif

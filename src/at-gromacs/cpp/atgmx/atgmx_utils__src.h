@@ -21,7 +21,7 @@
 
 #include "atgmx.h"
 
-namespace gmx
+namespace atgmx
 {
 
 /* to be used as a replacement of opt2fn(),
@@ -291,6 +291,6 @@ void AtGmx::scaleForce(rvec f[], const t_mdatoms *mdatoms)
 
 #endif
 
-} // namespace gmx
+} // namespace atgmx
 
 #endif

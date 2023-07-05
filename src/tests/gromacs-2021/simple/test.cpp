@@ -69,7 +69,7 @@ int work(int argc, char **argv)
   // initialize GROMACS variables
   init_gromacs_vars(cr.get(), ir.get(), enerd.get());
 
-  auto atgmx = gmx::AtGmx("at.cfg", ir.get(), cr.get(), from_cpt, AT__FALSE, AT__INIT_VERBOSE);
+  auto atgmx = atgmx::AtGmx("at.cfg", ir.get(), cr.get(), nullptr, from_cpt, AT__INIT_VERBOSE);
 
   zcom_mtrng__init_from_seed(rng, 12345);
 

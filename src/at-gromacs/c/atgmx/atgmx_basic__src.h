@@ -42,29 +42,27 @@ int atgmx__init(
     at_bool_t is_continuation,
     at_flags_t flags)
 {
-  if (fn_cfg != NULL) {
-    atgmx->enabled = AT__TRUE;
-  } else {
-    atgmx->enabled = AT__FALSE;
-    return 0;
-  }
+  atgmx->enabled = ((fn_cfg != NULL) ? AT__TRUE : AT__FALSE);
 
   atgmx->is_main_node = (ATGMX_IS_MAIN_RANK(cr) ? AT__TRUE : AT__FALSE);
 
-  if (atgmx->is_main_node) {
+  if (atgmx->enabled && atgmx->is_main_node) {
     at_params_sys_t sys_params[1];
 
     sys_params->boltz = BOLTZ;
-    sys_params->sim_id = 0;
     sys_params->md_time_step = ir->delta_t;
+    sys_params->sim_id = (MULTISIM(cr) ? cr->ms->sim : 0);
     sys_params->multi_sims = (MULTISIM(cr) != NULL);
     sys_params->is_continuation = is_continuation;
 
-    at__init(atgmx->at, fn_cfg, sys_params, flags);
+    zcom_utils__exit_if (at__init(atgmx->at, fn_cfg, sys_params, flags) != 0,
+        "failed to initialize at from \"%s\"\n", fn_cfg);
   }
 
+  //init_logger();
+
 #ifdef GMX_MPI
-  /* tell every node the settings on the master
+  /* tell every node the settings on the main node
    * valid only for PP only node, maybe we need to
    * consider using mpi_comm_mysim for more advanced versions
    * we pass MPI_COMM_NULL to avoid the case of one-node-mpi */
@@ -73,12 +71,14 @@ int atgmx__init(
   }
 #endif
 
-  atgmx__update_thermostat_temperatures(atgmx, ir);
+  if (atgmx->enabled) {
+    atgmx__update_thermostat_temperatures(atgmx, ir);
 
-  atgmx__update_force_scale(atgmx, cr);
+    atgmx__update_force_scale(atgmx, cr);
 
-  if (atgmx->is_main_node) {
-    at__manifest(atgmx->at);
+    if (atgmx->is_main_node) {
+      at__manifest(atgmx->at);
+    }
   }
 
   return 0;

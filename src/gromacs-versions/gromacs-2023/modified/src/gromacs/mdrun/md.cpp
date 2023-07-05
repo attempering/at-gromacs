@@ -524,11 +524,10 @@ void gmx::LegacySimulator::do_md()
                                 opt2fn("-awh", nfile, fnm),
                                 pull_work);
 
-    auto atGmx = AtGmx(
+    auto atGmx = atgmx::AtGmx(
         opt2fn_null("-at", nfile, fnm),
-        ir, cr,
+        ir, cr, ms,
         startingBehavior != StartingBehavior::NewSimulation,
-        isMultiSim(ms),
         AT__INIT_VERBOSE);
 
     if (useReplicaExchange && MAIN(cr))

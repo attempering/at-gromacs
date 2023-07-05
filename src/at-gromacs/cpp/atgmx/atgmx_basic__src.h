@@ -22,7 +22,7 @@
 #include "atgmx.h"
 //#include "atgmx_mpi.h"
 
-namespace gmx
+namespace atgmx
 {
 
 void AtGmx::updateThermostatTemperatures(const t_inputrec *ir) const
@@ -47,12 +47,34 @@ void AtGmx::updateThermostatTemperatures(const t_inputrec *ir) const
 
 
 
+static bool is_multi_sim(const gmx_multisim_t *ms)
+{
+  return ms != nullptr;
+}
+
+static int get_multisim_sim_id(const gmx_multisim_t *ms)
+{
+  if (is_multi_sim(ms)) {
+
+#if GMX_VERSION >= 20210000
+    return ms->simulationIndex_;
+#else
+    return ms->sim;
+#endif
+
+  } else {
+    return 0;
+  }
+}
+
+
+
 AtGmx::AtGmx(
     const char *fn_cfg,
     const t_inputrec *ir,
     t_commrec *cr,
+    const gmx_multisim_t *ms,
     bool isContinuation,
-    bool multiSims,
     at_flags_t flags)
 {
   enabled_ = (fn_cfg != nullptr);
@@ -68,9 +90,9 @@ AtGmx::AtGmx(
     sys_params->boltz = BOLTZ;
 #endif
 
-    sys_params->sim_id = 0;
     sys_params->md_time_step = ir->delta_t;
-    sys_params->multi_sims = static_cast<at_bool_t>(multiSims);
+    sys_params->sim_id = get_multisim_sim_id(ms);
+    sys_params->multi_sims = (is_multi_sim(ms) ? AT__TRUE : AT__FALSE);
     sys_params->is_continuation = static_cast<at_bool_t>(isContinuation);
 
     // This call may fail is the configuration doesn't exist
@@ -92,7 +114,7 @@ AtGmx::AtGmx(
   initLogger(isContinuation);
 
 #ifdef GMX_MPI
-  // tell every node the settings on the master
+  // tell every node the settings on the main node
   // valid only for PP only node, maybe we need to
   // consider using mpi_comm_mysim for more advanced versions
   // we pass MPI_COMM_NULL to avoid the case of one-node-mpi
@@ -130,6 +152,6 @@ AtGmx::~AtGmx()
 }
 
 
-} // namespace gmx
+} // namespace atgmx
 
 #endif

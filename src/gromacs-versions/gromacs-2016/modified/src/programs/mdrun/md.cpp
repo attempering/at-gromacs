@@ -500,11 +500,10 @@ double gmx::do_md(FILE *fplog, t_commrec *cr, int nfile, const t_filenm fnm[],
         set_constraints(constr, top, ir, mdatoms, cr);
     }
 
-    AtGmx atGmx(
+    atgmx::AtGmx atGmx(
         opt2fn_null("-at", nfile, fnm),
-        ir, cr,
+        ir, cr, cr->ms,
         Flags & MD_STARTFROMCPT,
-        (MULTISIM(cr) != NULL),
         AT__INIT_VERBOSE);
 
     if (repl_ex_nst > 0 && MASTER(cr))

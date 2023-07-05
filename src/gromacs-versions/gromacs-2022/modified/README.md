@@ -85,11 +85,10 @@ Modify the function `do_md()`
 1. At the beginning of the function, before entering the MD loop, add
 
     ```C++
-    auto atGmx = AtGmx(
+    auto atGmx = atgmx::AtGmx(
         opt2fn_null("-at", nfile, fnm),
-        ir, cr,
+        ir, cr, ms,
         startingBehavior != StartingBehavior::NewSimulation,
-        isMultiSim(ms),
         AT__INIT_VERBOSE);
     ```
 
