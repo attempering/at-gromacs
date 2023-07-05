@@ -20,67 +20,34 @@
 #define ATGMX_CONTEXT_GROMACS_H__
 
 
+// This header applies to the C++ code of GROMACS
+// and it only applies to GROMACS 2016 or later
+//
+// GROMACS 4.6, 5.0, 5.1 are not supported.
+//
+
 #ifndef GMX_VERSION
 #include "gromacs/version.h"
 #endif
 
+// To figure out the path of certain file
+// cd to the directory containing all gromacs versions
+// and run
+//
+// find . -name "vsite.h" | grep -v [45]. | grep -v 1-6
+//
 
-// /src/gromacs/utility (5.1, 2021)
-// /include (4.6)
 #include "gromacs/utility/smalloc.h"
 
-#if GMX_VERSION >= 20160000
-// /src/gromacs/gmxlib (2021)
 #include "gromacs/gmxlib/network.h"
-#else
-#include "gromacs/legacyheaders/network.h"
-#endif
 
-#if GMX_VERSION >= 20160000
-// (2021)
 #include "gromacs/mdlib/vsite.h"
-#else
-// (5.0)
-#include "gromacs/legacyheaders/network.h"
-#endif
 
-#if GMX_VERSION >= 20180000
-#include "gromacs/mdlib/enerdata_utils.h"
-#endif
-
-#if GMX_VERSION >= 20180000
-#include "gromacs/mdtypes/enerdata.h"
-#endif
-
-#if GMX_VERSION >= 20180000
-#include "gromacs/mdtypes/pull_params.h"
-#endif
-
-#if GMX_VERSION >= 20180000
-#include "gromacs/mdtypes/multipletimestepping.h"
-#endif
-
-#if GMX_VERSION >= 20180000
-#include "gromacs/utility/keyvaluetree.h"
-#endif
-
-// t_inputrec
-#if GMX_VERSION >= 20160000
-// (2021)
+// for t_inputrec
 #include "gromacs/mdtypes/inputrec.h"
-#else
-// (5.0)
-#include "gromacs/legacyheaders/inputrec.h"
-#endif
 
-// t_commrec, MASTER(), PAR()
-#if GMX_VERSION >= 20160000
-// (2021)
+// for t_commrec, MASTER(), PAR()
 #include "gromacs/mdtypes/commrec.h"
-#else
-// (5.0)
-#include "gromacs/legacyheaders/types/commrec.h"
-#endif
 
 #ifdef MASTER
 #define ATGMX_IS_MAIN_RANK(cr) MASTER(cr)
@@ -88,47 +55,48 @@
 #define ATGMX_IS_MAIN_RANK(cr) MAIN(cr)
 #endif
 
-
-#if GMX_VERSION >= 20160000
-// (2021)
-// t_mdatoms
-#include "gromacs/mdtypes/mdatom.h"
-#else
-// (5.0)
-#include "gromacs/legacyheaders/types/mdatom.h"
+#if GMX_VERSION >= 20190000
+#include "gromacs/mdtypes/enerdata.h"
 #endif
 
-// gmx::ForceBuffersView
+#if GMX_VERSION >= 20200000
+#include "gromacs/mdlib/enerdata_utils.h"
+#endif
+
+#if GMX_VERSION >= 20200000
+#include "gromacs/mdtypes/pull_params.h"
+#endif
+
+#if GMX_VERSION >= 20210000
+#include "gromacs/mdtypes/multipletimestepping.h"
+#endif
+
 #if GMX_VERSION >= 20180000
+#include "gromacs/utility/keyvaluetree.h"
+#endif
+
+#include "gromacs/mdtypes/mdatom.h"
+
+// gmx::ForceBuffersView
+#if GMX_VERSION >= 20210000
 // (2021)
 #include "gromacs/mdtypes/forcebuffers.h"
 #endif
 
 // gmx_omp_nthreads_get();
-#if GMX_VERSION >= 20160000
 #include "gromacs/mdlib/gmx_omp_nthreads.h"
-#endif
 
-// getThreadAtomRange();
-#if GMX_VERSION >= 20160000
+// for getThreadAtomRange();
 #include "gromacs/mdlib/update.h"
-#else 
-#include "gromacs/legacyheaders/update.h"
-#endif
 
 // t_filenm
-#if GMX_VERSION >= 20160000
-// (2021)
 #include "gromacs/commandline/filenm.h"
-#else
-// (5.0)
-#include "gromacs/fileio/filenm.h"
-#endif
 
 // gmx_multisim_t
-#if GMX_VERSION >= 20180000
-// (2021)
+#if GMX_VERSION >= 20200000
 #include "gromacs/mdrunutility/multisim.h"
+#else
+#include "gromacs/mdrun/multisim.h"
 #endif
 
 // mpi.h or tmpi.h
@@ -136,7 +104,7 @@
 
 #include "gromacs/fileio/gmxfio.h"
 
-// for formatStringV()
-//#include "gromacs/utility/stringutil.h"
+// formatStringV() is defined only for GROMACS 2018 or later
+#include "gromacs/utility/stringutil.h"
 
 #endif

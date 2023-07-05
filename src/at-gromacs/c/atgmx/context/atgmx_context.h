@@ -26,13 +26,18 @@
 #include "physics.h"
 
 #if GMX_VERSION >= 50000
-#include "gromacs/utility/smalloc.h"
+  #include "gromacs/utility/smalloc.h"
 #else
-#include "smalloc.h"
+  #include "smalloc.h"
 #endif
 
-#include "network.h"
-#include "vsite.h"
+#if GMX_VERSION >= 50000
+  #include "gromacs/legacyheaders/network.h"
+  #include "gromacs/legacyheaders/vsite.h"
+#else
+  #include "network.h"
+  #include "vsite.h"
+#endif
 
 #ifdef GMX_LIB_MPI
 #include <mpi.h>
