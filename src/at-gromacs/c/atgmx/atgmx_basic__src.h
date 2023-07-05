@@ -49,7 +49,7 @@ int atgmx__init(
     return 0;
   }
 
-  atgmx->is_main_node = (MASTER(cr) ? AT__TRUE : AT__FALSE);
+  atgmx->is_main_node = (ATGMX_IS_MAIN_RANK(cr) ? AT__TRUE : AT__FALSE);
 
   if (atgmx->is_main_node) {
     at_params_sys_t sys_params[1];

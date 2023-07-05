@@ -1118,7 +1118,7 @@ void gmx::LegacySimulator::do_md()
         const bool computeDHDL = ((ir->efep != FreeEnergyPerturbationType::No || ir->bSimTemp)
                                   && (do_per_step(step, nstfep) || bCalcEner));
 
-        if (atGmx.do_tempering_on_step(step, bNS)) {
+        if (atGmx.doTemperingOnStep(step, bNS)) {
             bCalcEner = TRUE;
             bCalcVir = TRUE;
         }
@@ -1224,7 +1224,7 @@ void gmx::LegacySimulator::do_md()
                      ddBalanceRegionHandler);
         }
 
-        atGmx.scale_force(f.view(), md);
+        atGmx.scaleForce(f.view(), md);
 
         // VV integrators do not need the following velocity half step
         // if it is the first step after starting from a checkpoint.

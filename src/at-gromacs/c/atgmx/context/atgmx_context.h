@@ -46,4 +46,6 @@
 #include "tmpi.h"
 #endif
 
+#define ATGMX_IS_MAIN_RANK(cr) MASTER(cr)
+
 #endif

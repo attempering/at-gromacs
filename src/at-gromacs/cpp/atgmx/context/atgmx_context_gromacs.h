@@ -49,10 +49,10 @@
 // for t_commrec, MASTER(), PAR()
 #include "gromacs/mdtypes/commrec.h"
 
-#ifdef MASTER
-#define ATGMX_IS_MAIN_RANK(cr) MASTER(cr)
-#else
+#if GMX_VERSION >= 20230000
 #define ATGMX_IS_MAIN_RANK(cr) MAIN(cr)
+#else
+#define ATGMX_IS_MAIN_RANK(cr) MASTER(cr)
 #endif
 
 #if GMX_VERSION >= 20190000
@@ -95,7 +95,7 @@
 // gmx_multisim_t
 #if GMX_VERSION >= 20200000
 #include "gromacs/mdrunutility/multisim.h"
-#else
+#elif GMX_VERSION >= 20190000
 #include "gromacs/mdrun/multisim.h"
 #endif
 
