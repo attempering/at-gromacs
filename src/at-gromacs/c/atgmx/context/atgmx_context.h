@@ -46,6 +46,10 @@
 #include "tmpi.h"
 #endif
 
-#define ATGMX__IS_MAIN_RANK(cr) MASTER(cr)
+#if GMX_VERSION >= 20230000
+  #define ATGMX__IS_MAIN_RANK(cr) MAIN(cr)
+#else
+  #define ATGMX__IS_MAIN_RANK(cr) MASTER(cr)
+#endif
 
 #endif

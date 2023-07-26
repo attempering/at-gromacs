@@ -10,7 +10,7 @@ void gmx_bcast(int nbytes, void *b, MPI_Comm communicator)
 
 void gmx_sumd(int nr, double r[], const t_commrec *cr)
 {
-#if defined(GMX_MPI)
+#ifdef GMX_MPI
     MPI_Allreduce(MPI_IN_PLACE, r, nr, MPI_DOUBLE, MPI_SUM,
                   cr->mpi_comm_mygroup);
 #endif
