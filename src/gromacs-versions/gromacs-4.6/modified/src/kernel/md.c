@@ -247,13 +247,13 @@ double do_md(FILE *fplog, t_commrec *cr, int nfile, const t_filenm fnm[],
     atgmx_t atgmx[1];
 
     atgmx__init(atgmx,
-        atgmx__opt2fn("-at", nfile, fnm),
+        atgmx__opt2fn_null("-at", nfile, fnm),
         ir, cr,
         Flags & MD_STARTFROMCPT,
         AT__INIT_VERBOSE);
 
     fprintf(stderr, "Info@atgmx: configuration file [%s], enabled %d is_master %d, %d\n",
-        atgmx__opt2fn("-at", nfile, fnm), atgmx->enabled, atgmx->is_main_node, MASTER(cr));
+        atgmx__opt2fn_null("-at", nfile, fnm), atgmx->enabled, atgmx->is_main_node, MASTER(cr));
 
     /* Check for special mdrun options */
     bRerunMD = (Flags & MD_RERUN);
@@ -1241,6 +1241,8 @@ double do_md(FILE *fplog, t_commrec *cr, int nfile, const t_filenm fnm[],
         if (bVV && !bStartingFromCpt && !bRerunMD)
         /*  ############### START FIRST UPDATE HALF-STEP FOR VV METHODS############### */
         {
+            rvec *vbuf = NULL;
+
             if (ir->eI == eiVV && bInitStep)
             {
                 /* if using velocity verlet with full time step Ekin,
@@ -1249,7 +1251,8 @@ double do_md(FILE *fplog, t_commrec *cr, int nfile, const t_filenm fnm[],
                  * revert back to the initial coordinates
                  * so that the input is actually the initial step.
                  */
-                copy_rvecn(state->v, cbuf, 0, state->natoms); /* should make this better for parallelizing? */
+                snew(vbuf, state->natoms);
+                copy_rvecn(state->v, vbuf, 0, state->natoms); /* should make this better for parallelizing? */
             }
             else
             {
@@ -1429,7 +1432,8 @@ double do_md(FILE *fplog, t_commrec *cr, int nfile, const t_filenm fnm[],
             /* if it's the initial step, we performed this first step just to get the constraint virial */
             if (bInitStep && ir->eI == eiVV)
             {
-                copy_rvecn(cbuf, state->v, 0, state->natoms);
+                copy_rvecn(vbuf, state->v, 0, state->natoms);
+                sfree(vbuf);
             }
 
             GMX_MPE_LOG(ev_timestep1);

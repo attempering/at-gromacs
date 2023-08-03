@@ -25,33 +25,38 @@
 
 
 
-/* to be used as a replacement of opt2fn(),
- * it will replace the file extension from .mdp to .cfg */
-char *atgmx__opt2fn(const char *opt, int nfile, const t_filenm fnm[])
+/* to be used as a replacement of opt2fn_null() */
+char *atgmx__opt2fn_null(const char *opt, int nfile, const t_filenm fnm[])
 {
   int i;
 
   for (i = 0; i < nfile; i++) {
 
     if (strcmp(opt, fnm[i].opt) == 0) { // a match is found
-      char *fname = fnm[i].fns[0];
 
-      /*
-      if (fnm[i].ftp == efCFG) {
-        char *p;
-
-        // modify the extension from .mdp to .cfg
-        if (strcmp(fname, "grompp.mdp") == 0) { // replace the default name by NULL
-          return NULL; // we do not have default name for .cfg files
-        } else if ((p = strstr(fname, ".cfg.mdp")) != NULL) {
-          p[4] = '\0';
-        } else if ((p = strstr(fname, ".mdp")) != NULL) {
-          strcpy(p, ".cfg");
-        }
+      // make sure that the user explicitly sets the option
+      //
+      // Specifically, for the configuration file
+      // "at.cfg", we require the user to set
+      // the option explicitly as "-at at.cfg".
+      //
+      // If the file name fnm[i].fns[0] of this option
+      // is set by the default value through "-deffnm md",
+      // such that the file name is "md.cfg"
+      // then this file name does not count.
+      //
+      // In such a case, (fnm[i].flag & ffSET) is 0
+      // and the function returns NULL.
+      // This in turn signals the caller that the PCST
+      // module is not activated from the command line.
+      //
+      if (((fnm[i].flag & ffOPT) != 0)
+       && ((fnm[i].flag & ffSET) == 0)) {
+        return NULL;
+      } else {
+        return fnm[i].fns[0];
       }
-      */
 
-      return fname;
     }
 
   }
@@ -87,12 +92,14 @@ void atgmx__update_force_scale(atgmx_t *atgmx, t_commrec *cr)
 at_bool_t atgmx__do_tempering_on_step(atgmx_t *atgmx, at_llong_t step,
     at_bool_t is_ns_step)
 {
+  int nst_tempering;
+  at_bool_t do_tempering;
+
   if (!atgmx->enabled) {
     return AT__FALSE;
   }
 
-  int nst_tempering = atgmx->at->driver->nst_tempering;
-  at_bool_t do_tempering;
+  nst_tempering = atgmx->at->driver->nst_tempering;
 
   if (nst_tempering > 0) {
     do_tempering = (step % nst_tempering) == 0;
@@ -147,6 +154,10 @@ int atgmx__move(atgmx_t *atgmx,
 {
   at_bool_t do_tempering;
   at_params_step_t step_params[1];
+
+  if (!atgmx->enabled) {
+    return 0;
+  }
 
   step_params->step = (at_llong_t) step;
   step_params->is_first_step = is_first_step;

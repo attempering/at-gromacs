@@ -478,7 +478,7 @@ double do_md(FILE *fplog, t_commrec *cr, int nfile, const t_filenm fnm[],
     }
 
     atgmx__init(atgmx,
-        atgmx__opt2fn("-at", nfile, fnm),
+        atgmx__opt2fn_null("-at", nfile, fnm),
         ir, cr,
         Flags & MD_STARTFROMCPT,
         AT__INIT_VERBOSE);

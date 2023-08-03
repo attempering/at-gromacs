@@ -33,7 +33,7 @@ Modify the function `do_md()` in [src/kernel/md.c](src/kernel/md.c)
     atgmx_t atgmx[1];
 
     atgmx__init(atgmx,
-        atgmx__opt2fn("-at", nfile, fnm),
+        atgmx__opt2fn_null("-at", nfile, fnm),
         ir, cr,
         Flags & MD_STARTFROMCPT,
         AT__INIT_VERBOSE);
@@ -65,6 +65,60 @@ Modify the function `do_md()` in [src/kernel/md.c](src/kernel/md.c)
 
     ```C
     atgmx__finish(atgmx);
+    ```
+
+#### Corrections to `md.c`
+
+1. Rewrite the block, around line 1244,
+
+    ```C
+    if (ir->eI == eiVV && bInitStep)
+    {
+        /* if using velocity verlet with full time step Ekin,
+            * take the first half step only to compute the
+            * virial for the first step. From there,
+            * revert back to the initial coordinates
+            * so that the input is actually the initial step.
+            */
+        copy_rvecn(state->v, cbuf, 0, state->natoms); /* should make this better for parallelizing? */
+    }
+    ```
+
+    as
+
+    ```C
+    rvec *vbuf = NULL;
+
+    if (ir->eI == eiVV && bInitStep)
+    {
+        /* if using velocity verlet with full time step Ekin,
+            * take the first half step only to compute the
+            * virial for the first step. From there,
+            * revert back to the initial coordinates
+            * so that the input is actually the initial step.
+            */
+        snew(vbuf, state->natoms);
+        copy_rvecn(state->v, vbuf, 0, state->natoms); /* should make this better for parallelizing? */
+    }
+    ```
+
+2. Rewrite the following block, around line 1433,
+
+    ```C
+    if (bInitStep && ir->eI == eiVV)
+    {
+        copy_rvecn(cbuf, state->v, 0, state->natoms);
+    }
+    ```
+
+    as
+
+    ```C
+    if (bInitStep && ir->eI == eiVV)
+    {
+        copy_rvecn(vbuf, state->v, 0, state->natoms);
+        sfree(vbuf);
+    }
     ```
 
 ## Script to sync modified files

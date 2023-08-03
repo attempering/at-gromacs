@@ -24,10 +24,9 @@
 namespace atgmx
 {
 
-/* to be used as a replacement of opt2fn(),
- * it will replace the file extension from .mdp to .cfg */
+/* to be used as a replacement of opt2fn_null() */
 /*
-__inline const char *atgmx__opt2fn(const char *opt, int nfile, const t_filenm fnm[])
+__inline const char *atgmx__opt2fn_null(const char *opt, int nfile, const t_filenm fnm[])
 {
   const t_filenm* fileOption = nullptr;
 
@@ -174,8 +173,7 @@ int AtGmx::move(
     t_commrec *cr)
 {
   if (!enabled_) {
-    //fprintf(stderr, "\rError@atgmx: trying to call move() without enabling atgmx\n");
-    return -1;
+    return 0;
   }
 
   at_params_step_t step_params[1];

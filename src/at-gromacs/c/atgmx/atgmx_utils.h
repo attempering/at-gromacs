@@ -27,7 +27,7 @@
 
 /* to be used as a replacement of opt2fn(),
  * it will replace the file extension from .mdp to .cfg */
-char *atgmx__opt2fn(const char *opt, int nfile, const t_filenm fnm[]);
+char *atgmx__opt2fn_null(const char *opt, int nfile, const t_filenm fnm[]);
 
 void atgmx__update_force_scale(atgmx_t *atgmx, t_commrec *cr);
 
