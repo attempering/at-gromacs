@@ -28,7 +28,7 @@ void init_gromacs_vars(t_commrec *cr, t_inputrec *ir, gmx_enerdata_t *enerd)
 {
   int world_size = 1, world_rank = 0;
 
-#ifdef GMX_MPI
+#if ATGMX_MPI
   cr->mpi_comm_mygroup = MPI_COMM_WORLD;
   cr->mpi_comm_mysim = MPI_COMM_WORLD;
 
@@ -70,7 +70,7 @@ int work(int argc, char **argv)
   // initialize GROMACS variables
   init_gromacs_vars(cr, ir, enerd);
 
-  atgmx__init(atgmx, "at.cfg", ir, cr, multi_dirs, from_cpt, AT__INIT_VERBOSE);
+  atgmx__init(atgmx, "at.cfg", ir, cr, cr->ms, multi_dirs, from_cpt, AT__INIT_VERBOSE);
 
   zcom_mtrng__init_from_seed(rng, 12345);
 
@@ -105,7 +105,7 @@ int work(int argc, char **argv)
 
   free(ir->opts.ref_t);
 
-#ifdef GMX_MPI
+#if ATGMX_MPI
   MPI_Finalize();
 #endif
 

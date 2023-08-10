@@ -18,7 +18,8 @@
 
 #ifndef ATGMX_MPI__SRC_H__
 #define ATGMX_MPI__SRC_H__
-#ifdef GMX_MPI
+
+#if ATGMX_MPI
 
 #include "atgmx.h"
 
@@ -77,5 +78,6 @@ int AtGmx::initMpi(MPI_Comm comm)
 
 } // namespace atgmx
 
-#endif /* defined(GMX_MPI) */
+#endif /* ATGMX_MPI */
+
 #endif

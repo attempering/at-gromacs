@@ -41,6 +41,7 @@ int atgmx__init(
     const char *fn_cfg,
     t_inputrec *ir,
     t_commrec *cr,
+    const gmx_multisim_t *ms,
     at_bool_t multi_dirs,
     at_bool_t is_continuation,
     at_flags_t flags)
@@ -54,8 +55,8 @@ int atgmx__init(
 
     sys_params->boltz = BOLTZ;
     sys_params->md_time_step = ir->delta_t;
-    sys_params->sim_id = (MULTISIM(cr) ? cr->ms->sim : 0);
-    sys_params->add_suffix = (MULTISIM(cr) != NULL && !multi_dirs);
+    sys_params->sim_id = (ms != NULL ? ms->sim : 0);
+    sys_params->add_suffix = (ms != NULL && !multi_dirs) ? AT__TRUE : AT__FALSE;
     sys_params->is_continuation = is_continuation;
 
     zcom_utils__exit_if (at__init(atgmx->at, fn_cfg, sys_params, flags) != 0,

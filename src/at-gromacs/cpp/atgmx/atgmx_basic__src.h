@@ -114,7 +114,7 @@ AtGmx::AtGmx(
 
   initLogger(isContinuation);
 
-#ifdef GMX_MPI
+#if ATGMX_MPI
   // tell every node the settings on the main node
   // valid only for PP only node, maybe we need to
   // consider using mpi_comm_mysim for more advanced versions

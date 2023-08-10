@@ -22,7 +22,7 @@ int work(int argc, char **argv)
 {
   int world_size = 1, world_rank = 0;
 
-#ifdef GMX_MPI
+#if ATGMX_MPI
   // Get the number of processes
   MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
@@ -32,7 +32,7 @@ int work(int argc, char **argv)
 
   printf("node %d/%d\n", world_rank, world_size);
 
-#ifdef GMX_MPI
+#if ATGMX_MPI
   MPI_Finalize();
 #endif
 

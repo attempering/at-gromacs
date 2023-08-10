@@ -23,13 +23,11 @@ double sigma = 100.0;
 
 at_llong_t nsteps = 1000000;
 
-#include "gmx_patches.h"
-
 void init_gromacs_vars(t_commrec *cr, t_inputrec *ir, gmx_enerdata_t *enerd)
 {
   int world_size = 1, world_rank = 0;
 
-#ifdef GMX_MPI
+#if ATGMX_MPI
   cr->mpi_comm_mygroup = MPI_COMM_WORLD;
   cr->mpi_comm_mysim = MPI_COMM_WORLD;
 
@@ -63,13 +61,15 @@ int work(int argc, char **argv)
   auto cr = std::make_shared<t_commrec>();
   auto ir = std::make_unique<t_inputrec>();
   auto enerd = std::make_shared<gmx_enerdata_t>(1, 0);
+  at_bool_t multi_dirs = AT__TRUE;
   at_bool_t from_cpt = AT__FALSE;
   zcom_mtrng_t rng[1];
 
   // initialize GROMACS variables
   init_gromacs_vars(cr.get(), ir.get(), enerd.get());
 
-  auto atgmx = atgmx::AtGmx("at.cfg", ir.get(), cr.get(), nullptr, from_cpt, AT__INIT_VERBOSE);
+  auto atgmx = atgmx::AtGmx("at.cfg", ir.get(), cr.get(), 
+      nullptr, multi_dirs, from_cpt, AT__INIT_VERBOSE);
 
   zcom_mtrng__init_from_seed(rng, 12345);
 
@@ -104,7 +104,7 @@ int work(int argc, char **argv)
     }
   }
 
-#ifdef GMX_MPI
+#if ATGMX_MPI
   MPI_Finalize();
 #endif
 
@@ -115,11 +115,11 @@ int work(int argc, char **argv)
 int main(int argc, char **argv)
 {
 
-#ifdef GMX_LIB_MPI
+#if GMX_LIB_MPI
   MPI_Init(&argc, &argv);
 #endif
 
-#ifdef GMX_THREAD_MPI
+#if GMX_THREAD_MPI
   tMPI_Init(&argc, &argv, &work);
 #endif
 
