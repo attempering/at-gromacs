@@ -33,6 +33,7 @@ public:
         const t_inputrec *ir,
         t_commrec *cr,
         const gmx_multisim_t *ms,
+        bool multiDirs,
         bool isContinuation,
         at_flags_t flags);
 

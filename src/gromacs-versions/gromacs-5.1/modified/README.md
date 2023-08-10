@@ -89,7 +89,7 @@ Modify the function `do_md()`
     ```C
     atgmx__init(atgmx,
         atgmx__opt2fn_null("-at", nfile, fnm),
-        ir, cr,
+        ir, cr, opt2bSet("-multidir", nfile, fnm),
         Flags & MD_STARTFROMCPT,
         AT__INIT_VERBOSE);
     ```

@@ -465,6 +465,7 @@ void gmx::LegacySimulator::do_md()
     auto atGmx = atgmx::AtGmx(
         opt2fn_null("-at", nfile, fnm),
         ir, cr, ms,
+        opt2bSet("-multidir", nfile, fnm),
         startingBehavior != StartingBehavior::NewSimulation,
         AT__INIT_VERBOSE);
 

@@ -34,7 +34,7 @@ Modify the function `do_md()` in [src/kernel/md.c](src/kernel/md.c)
 
     atgmx__init(atgmx,
         atgmx__opt2fn_null("-at", nfile, fnm),
-        ir, cr,
+        ir, cr, opt2bSet("-multidir", nfile, fnm),
         Flags & MD_STARTFROMCPT,
         AT__INIT_VERBOSE);
     ```

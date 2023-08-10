@@ -6,7 +6,7 @@
 
 ```sh
 cd src/gromacs
-ln -sf ../../../../at-engine/src/interface/gromacs/versions/gromacs-2021/modified/src/gromacs/at-gromacs
+ln -sf ../../../../at-gromacs/src/gromacs-versions/gromacs-2021/modified/src/gromacs/at-gromacs
 ```
 
 Make sure there is a `CMakeLists.txt` under the `at-gromacs` directory,
@@ -87,6 +87,7 @@ Modify the function `do_md()`
     auto atGmx = atgmx::AtGmx(
         opt2fn_null("-at", nfile, fnm),
         ir, cr, ms,
+        opt2bSet("-multidir", nfile, fnm),
         startingBehavior != StartingBehavior::NewSimulation,
         AT__INIT_VERBOSE);
     ```

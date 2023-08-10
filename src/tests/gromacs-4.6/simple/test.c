@@ -63,13 +63,14 @@ int work(int argc, char **argv)
   t_commrec cr[1];
   t_inputrec ir[1];
   gmx_enerdata_t enerd[1];
+  at_bool_t multi_dirs = AT__TRUE;
   at_bool_t from_cpt = AT__FALSE;
   zcom_mtrng_t rng[1];
 
   // initialize GROMACS variables
   init_gromacs_vars(cr, ir, enerd);
 
-  atgmx__init(atgmx, "at.cfg", ir, cr, from_cpt, AT__INIT_VERBOSE);
+  atgmx__init(atgmx, "at.cfg", ir, cr, multi_dirs, from_cpt, AT__INIT_VERBOSE);
 
   zcom_mtrng__init_from_seed(rng, 12345);
 

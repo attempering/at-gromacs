@@ -74,6 +74,7 @@ AtGmx::AtGmx(
     const t_inputrec *ir,
     t_commrec *cr,
     const gmx_multisim_t *ms,
+    bool multiDirs,
     bool isContinuation,
     at_flags_t flags)
 {
@@ -92,7 +93,7 @@ AtGmx::AtGmx(
 
     sys_params->md_time_step = ir->delta_t;
     sys_params->sim_id = get_multisim_sim_id(ms);
-    sys_params->multi_sims = (is_multi_sim(ms) ? AT__TRUE : AT__FALSE);
+    sys_params->add_suffix = ((is_multi_sim(ms) && !multiDirs) ? AT__TRUE : AT__FALSE);
     sys_params->is_continuation = static_cast<at_bool_t>(isContinuation);
 
     // This call may fail is the configuration doesn't exist

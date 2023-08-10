@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ATGMX_LOGGER__DEF_H__
-#define ATGMX_LOGGER__DEF_H__
+#ifndef ATGMX_LOGGER_H__
+#define ATGMX_LOGGER_H__
 
 #include "../atgmx_engine_context.h"
 
@@ -53,7 +53,11 @@ public:
   }
 
   std::vector<FILE*> getFilePointers() const {
-    return std::vector<FILE*>({ stderr, fpLog_ });
+    std::vector<FILE*> fps({stderr});
+    if (fpLog_ != nullptr) {
+      fps.push_back(fpLog_);
+    }
+    return fps;
   }
 
   void printf(const char *fmt, ...) const;

@@ -142,9 +142,9 @@ void AtGmx::sumEnergy(
 void AtGmx::initLogger(
     bool isContinuation)
 {
-  if (!isMainNode_) {
-    return;
-  }
+  //if (!isMainNode_) {
+  //  return;
+  //}
 
   std::string fnLog;
   if (enabled_) {

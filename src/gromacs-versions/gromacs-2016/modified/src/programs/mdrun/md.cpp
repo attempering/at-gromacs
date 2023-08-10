@@ -503,6 +503,7 @@ double gmx::do_md(FILE *fplog, t_commrec *cr, int nfile, const t_filenm fnm[],
     atgmx::AtGmx atGmx(
         opt2fn_null("-at", nfile, fnm),
         ir, cr, cr->ms,
+        opt2bSet("-multidir", nfile, fnm),
         Flags & MD_STARTFROMCPT,
         AT__INIT_VERBOSE);
 

@@ -5,8 +5,8 @@
 ### Symbolically linking the at-gromacs directory under `src/gromacs`
 
 ```sh
-cd src/gromacs
-ln -sf ../../../../at-engine/src/interface/gromacs/versions/gromacs-2016/modified/src/gromacs/at-gromacs
+cd gromacs/gromacs-2016-latest/src/gromacs
+ln -sf ../../../../at-gromacs/src/gromacs-versions/gromacs-2016/modified/src/gromacs/at-gromacs
 ```
 
 Make sure there is a [CMakeLists.txt](src/gromacs/CMakeLists.txt) under the `at-gromacs` directory,
@@ -83,6 +83,7 @@ Modify the function `do_md()`
     auto atGmx = atgmx::AtGmx(
         opt2fn_null("-at", nfile, fnm),
         ir, cr, cr->ms,
+        opt2bSet("-multidir", nfile, fnm),
         Flags & MD_STARTFROMCPT,
         AT__INIT_VERBOSE);
     ```

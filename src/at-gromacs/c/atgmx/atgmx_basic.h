@@ -29,6 +29,7 @@ int atgmx__init(
     const char *fn_cfg,
     t_inputrec *ir,
     t_commrec *cr,
+    at_bool_t multi_dirs,
     at_bool_t is_continuation,
     at_flags_t flags);
 

@@ -1,5 +1,5 @@
-#ifndef ATGMX_LOGGER_H__
-#define ATGMX_LOGGER_H__
+#ifndef ATGMX_LOGGER__SRC_H__
+#define ATGMX_LOGGER__SRC_H__
 
 /* logger files using the GROMACS API */
 
@@ -76,4 +76,4 @@ void AtGmxLogger::info(const char *fmt, ...) const
 
 } // namespace atgmx
 
-#endif // ATGMX_LOGGER_H__
+#endif // ATGMX_LOGGER__SRC_H__
