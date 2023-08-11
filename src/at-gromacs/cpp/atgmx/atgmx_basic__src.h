@@ -96,7 +96,7 @@ AtGmx::AtGmx(
     sys_params->add_suffix = ((is_multi_sim(ms) && !multiDirs) ? AT__TRUE : AT__FALSE);
     sys_params->is_continuation = static_cast<at_bool_t>(isContinuation);
 
-    // This call may fail is the configuration doesn't exist
+    // This call may fail if the configuration file doesn't exist
     // or its content contains an error
     //
     // Our policy is to throw an exception if the filename
@@ -104,7 +104,7 @@ AtGmx::AtGmx(
     //
     // However, if the filename is not given,
     // i.e., the command-line options `-at at.cfg` is not set,
-    // we will simply set `enabled` to false
+    // we will simply set `enabled_` to false
     //
     if (at__init(at_, fn_cfg, sys_params, flags) != 0) {
       throw;

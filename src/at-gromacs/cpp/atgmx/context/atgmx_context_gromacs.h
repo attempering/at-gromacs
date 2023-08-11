@@ -107,4 +107,55 @@
 // formatStringV() is defined only for GROMACS 2018 or later
 #include "gromacs/utility/stringutil.h"
 
+#define ATGMX__IS_MAIN_SIM(ms) \
+    ((ms) == NULL || (ms)->sim == 0)
+
+
+#ifndef ATGMX_MPI
+
+  #if GMX_VERSION >= 20160000
+
+    /* modern versions,
+       GMX_MPI is always defined as either 0 or 1 */
+
+    #if defined(GMX_MPI)
+      #define ATGMX_MPI GMX_MPI
+    #else
+      /* should never reach here */
+      #define ATGMX_MPI 0
+    #endif
+
+  #else
+
+    /* legacy versions <= 5.1
+       GMX_MPI may not be defined */
+
+    #if defined(GMX_MPI)
+      #define ATGMX_MPI 1
+    #else
+      #define ATGMX_MPI 0
+    #endif
+
+  #endif
+
+#endif /* defined(ATGMX_MPI) */
+
+
+#ifndef GMX_DOUBLE
+#define GMX_DOUBLE 0
+#endif
+
+#ifndef GMX_GPU_CUDA
+#define GMX_GPU_CUDA 0
+#endif
+
+#ifndef GMX_GPU_OPENCL
+#define GMX_GPU_OPENCL 0
+#endif
+
+#ifndef GMX_GPU_SYCL
+#define GMX_GPU_SYCL 0
+#endif
+
+
 #endif

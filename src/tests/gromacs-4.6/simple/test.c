@@ -65,14 +65,14 @@ int work(int argc, char **argv)
   gmx_enerdata_t enerd[1];
   at_bool_t multi_dirs = AT__TRUE;
   at_bool_t from_cpt = AT__FALSE;
-  zcom_mtrng_t rng[1];
+  zcom_rng_mt19937_t rng[1];
 
   // initialize GROMACS variables
   init_gromacs_vars(cr, ir, enerd);
 
   atgmx__init(atgmx, "at.cfg", ir, cr, cr->ms, multi_dirs, from_cpt, AT__INIT_VERBOSE);
 
-  zcom_mtrng__init_from_seed(rng, 12345);
+  zcom_rng_mt19937__init_from_seed(rng, 12345);
 
   for (step = 1; step <= nsteps; step++) {
     at_bool_t is_first_step = (step == 1);
@@ -84,7 +84,7 @@ int work(int argc, char **argv)
 
     if (ATGMX__IS_MAIN_RANK(cr)) {
       epot = -sigma * sigma * atgmx__get_beta(atgmx)
-          + sigma * zcom_mtrng__rand_gauss(rng);
+          + sigma * zcom_rng_mt19937__rand_gauss(rng);
     } else {
       epot = 0;
     }
