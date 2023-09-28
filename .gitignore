@@ -9,3 +9,5 @@ _backup
 atdata*
 *.pdf
 refs
+sync-*.sh
+NOTES.md
