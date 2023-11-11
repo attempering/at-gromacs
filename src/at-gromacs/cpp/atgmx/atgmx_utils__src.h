@@ -180,7 +180,7 @@ int AtGmx::move(
 
   step_params->step = step;
   step_params->is_first_step = static_cast<at_bool_t>(isFirstStep);
-  step_params->is_last_step = static_cast<at_bool_t>(isLastStep);
+  step_params->is_final_step = static_cast<at_bool_t>(isLastStep);
   step_params->do_trace = static_cast<at_bool_t>(isXtcStep);
   step_params->flush_output = AT__FALSE;
 

@@ -79,7 +79,7 @@ int work(int argc, char **argv)
 
   for (step = 1; step <= nsteps; step++) {
     at_bool_t is_first_step = (step == 1);
-    at_bool_t is_last_step = (step == nsteps);
+    at_bool_t is_final_step = (step == nsteps);
     at_bool_t has_global_stats = AT__TRUE;
     at_bool_t is_xtc_step = AT__TRUE;
     at_bool_t is_ns_step = AT__TRUE;
@@ -95,7 +95,7 @@ int work(int argc, char **argv)
     enerd->term[F_EPOT] = epot;
 
     atgmx.move(enerd.get(), step,
-        is_first_step, is_last_step, has_global_stats,
+        is_first_step, is_final_step, has_global_stats,
         is_xtc_step, is_ns_step,
         cr.get());
 

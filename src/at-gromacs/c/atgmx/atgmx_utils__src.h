@@ -146,7 +146,7 @@ int atgmx__move(atgmx_t *atgmx,
     gmx_enerdata_t *enerd,
     at_llong_t step,
     at_bool_t is_first_step,
-    at_bool_t is_last_step,
+    at_bool_t is_final_step,
     at_bool_t has_global_stats,
     at_bool_t is_xtc_step,
     at_bool_t is_ns_step,
@@ -161,7 +161,7 @@ int atgmx__move(atgmx_t *atgmx,
 
   step_params->step = (at_llong_t) step;
   step_params->is_first_step = is_first_step;
-  step_params->is_last_step = is_last_step;
+  step_params->is_final_step = is_final_step;
   step_params->do_trace = is_xtc_step;
   step_params->flush_output = AT__FALSE;
 
