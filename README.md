@@ -1,6 +1,7 @@
 # GROMACS Adapters for AT-Engine
 
-This code defines a wrapper class `AtGmx`
+This code defines a thin wrapper class `AtGmx`
+(or `atgmx_t` in the C version)
 for adapting the AT-Engine to different GROMACS versions.
 
 The adapter code has a modern C++ version

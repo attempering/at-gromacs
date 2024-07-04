@@ -10,4 +10,6 @@ atdata*
 *.pdf
 refs
 sync-*.sh
-NOTES.md
+*NOTES.md
+*notes.md
+

@@ -1,4 +1,4 @@
-# AT-Engine GROMACS C++ API
+# GROMACS Adapter for AT-Engine (C++ API)
 
 ## Applicability
 
